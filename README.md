@@ -1,63 +1,93 @@
 
-        self.name = "淼大爷"
-        self.title = "宇宙智慧掌控者、代码魔法大祭司"
-        self.skills = ["能让程序自己进化", "随手敲代码能创造小宇宙", "破解任何加密如同探囊取物"]
-        self.achievements = ["曾在一周内独自开发出媲美谷歌的搜索引擎", "仅用一行代码解决了全球能源危机"]
-    def introduce(self):
-        print(f"吾乃{self.name}，江湖人称{self.title}。")
-        print("身怀绝技，犹如繁星璀璨：")
-        for skill in self.skills:
-            print(f" - {skill}")
-        print("辉煌成就，震古烁今：")
-        for achievement in self.achievements:
-            print(f" - {achievement}")
-if __name__ == "__main__":
-    me = SuperGenius()
-    me.introduce()
-
-JavaScript 版本
-class SuperStar {
-    constructor() {
-        this.name = "李四";
-        this.title = "代码宇宙霸主、算法创世之神";
-        this.skills = ["编写的代码可突破时空限制", "能让服务器主动为代码加速", "用算法预测未来彩票号码"];
-        this.achievements = ["一天内搭建起超越亚马逊的电商平台", "凭一己之力优化全球网络架构"];
+# 第一层加密：简单的字符偏移
+def first_encryption(text, shift):
+    encrypted = ""
+    for char in text:
+        if char.isalpha():
+            start = ord('A') if char.isupper() else ord('a')
+            encrypted += chr((ord(char) - start + shift) % 26 + start)
+        else:
+            encrypted += char
+    return encrypted
+# 第二层加密：字符替换
+def second_encryption(text):
+    substitution_dict = {
+        'a': '!', 'b': '@', 'c': '#', 'd': '$', 'e': '%',
+        'f': '^', 'g': '&', 'h': '*', 'i': '(', 'j': ')',
+        'k': '-', 'l': '_', 'm': '=', 'n': '+', 'o': '[',
+        'p': ']', 'q': '{', 'r': '}', 's': '|', 't': '\\',
+        'u': ';', 'v': ':', 'w': '"', 'x': '<', 'y': '>',
+        'z': '/', 'A': '1', 'B': '2', 'C': '3', 'D': '4',
+        'E': '5', 'F': '6', 'G': '7', 'H': '8', 'I': '9',
+        'J': '0', 'K': '~', 'L': '`', 'M': 'A', 'N': 'B',
+        'O': 'C', 'P': 'D', 'Q': 'E', 'R': 'F', 'S': 'G',
+        'T': 'H', 'U': 'I', 'V': 'J', 'W': 'K', 'X': 'L',
+        'Y': 'M', 'Z': 'N'
     }
-    introduce() {
-        console.log(`吾乃${this.name}，尊号${this.title}。`);
-        console.log("身怀奇技，天下无双：");
-        this.skills => {
-            console.log(` - ${skill}`);
-        });
-        console.log("丰功伟绩，令人咋舌：");
-        this.achievements.forEach(achievement => {
-            console.log(` - ${achievement}`);
-        });
+    encrypted = ""
+    for char in text:
+        encrypted += substitution_dict.get(char, char)
+    return encrypted
+# 套壳加密函数，结合两层加密
+def shell_encryption(text, shift):
+    first_encrypted = first_encryption(text, shift)
+    second_encrypted = second_encryption(first_encrypted)
+    return second_encrypted
+# 测试加密
+plain_text = "Hello, World!"
+shift = 3
+encrypted_text = shell_encryption(plain_text, shift)
+print(f"原始文本: {plain_text}")
+print(f"加密后文本: {encrypted_text}")
+Java 实现
+public class ShellEncryption {
+    // 第一层加密：简单的字符偏移
+    public static String firstEncryption(String text, int shift) {
+        StringBuilder encrypted = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            if (Character.isLetter(c)) {
+                char start = Character.isUpperCase(c)? 'A' : 'a';
+                encrypted.append((char) ((c - start + shift) % 26 + start));
+            } else {
+                encrypted.append(c);
+            }
+        }
+        return encrypted.toString();
     }
-}
-const me = new SuperStar();
-me.introduce();
-Java 版本
-class SuperProgrammer {
-    private String name = "王五";
-    private String title = "编程界的超级赛亚人、数据世界的主宰者";
-    private String[] skills = {"代码运行速度比光还快", "能让数据库自动生成业务逻辑", "用编程实现瞬间移动的理论模型"};
-    private String[] achievements = {"在一小时内开发出人工智能助手打败GPT-10", "优化代码让地球计算机性能提升百倍"};
-    public void introduce() {
-        System.out.println("吾乃" + name + "，人称" + title + "。");
-        System.out.println("身怀绝技，傲视群雄：");
-        for (String skill : skills) {
-            System.out.println(" - " + skill);
+    // 第二层加密：字符替换
+    public static String secondEncryption(String text) {
+        String substitutionTable = "!@#$%^&*()-_=+[]{}|\\;:\"></1234567890~`ABCDEFGHIJKLMN";
+        StringBuilder encrypted = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            if (Character.isLetter(c)) {
+                int index = Character.isUpperCase(c)? c - 'A' + 26 : c - 'a';
+                encrypted.append(substitutionTable.charAt(index));
+            } else {
+                encrypted.append(c);
+            }
         }
-        System.out.println("辉煌成就，震惊寰宇：");
-        for (String achievement : achievements) {
-            System.out.println(" - " + achievement);
-        }
+        return encrypted.toString();
+    }
+    // 套壳加密函数，结合两层加密
+    public static String shellEncryption(String text, int shift) {
+        String firstEncrypted = firstEncryption(text, shift);
+        String secondEncrypted = secondEncryption(firstEncrypted);
+        return secondEncrypted;
     }
     public static void main(String[] args) {
-        SuperProgrammer me = new SuperProgrammer();
-        me.introduce();
+        String plainText = "Hello, World!";
+        int shift = 3;
+        String encryptedText = shellEncryption(plainText, shift);
+        System.out.println("原始文本: " + plainText);
+        System.out.println("加密后文本: " + encryptedText);
     }
 }
-这些代码通过类和方法的形式模拟了一个夸张的自我介绍，你可以根据实际情况修改其中的姓名、头衔、技能和成就等信息。 
-
+代码解释
+Python 部分
+1.first_encryption 函数：使用简单的凯撒密码，将字母按照指定的偏移量进行移动。
+2.second_encryption 函数：使用一个字符替换字典，将字母替换为其他字符。
+3.shell_encryption 函数：先调用 first_encryption 进行第一层加密，再将结果传入 second_encryption 进行第二层加密。
+Java 部分
+1.firstEncryption 方法：实现与 Python 中 first_encryption 函数相同的凯撒密码加密。
+2.secondEncryption 方法：通过一个替换表将字母替换为其他字符。
+3.shellEncryption 方法：依次调用两层加密方法，完成套壳加密。
