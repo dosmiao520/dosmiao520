@@ -1,0 +1,11 @@
+import random
+
+def generate_ssq():
+    red_balls = random.sample(range(1, 34), 6)
+    red_balls.sort()
+    blue_ball = random.randint(1, 16)
+    return red_balls, blue_ball
+if __name__ == "__main__":
+    red, blue = generate_ssq()
+    print("红球号码：", ' '.join(f"{num:02d}" for num in red))
+    print("蓝球号码：", f"{blue:02d}")
