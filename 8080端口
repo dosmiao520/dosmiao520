@@ -1,0 +1,263 @@
+
+// 定义红黑树节点的颜色枚举
+enum Color {
+    RED, BLACK
+}
+// 定义红黑树节点类
+class RBNode {
+    int key;
+    RBNode left, right, parent;
+    Color color;
+    public RBNode(int key) {
+        this.key = key;
+        this.color = Color.RED;
+        this.left = null;
+        this.right = null;
+        this.parent = null;
+    }
+}
+// 红黑树类
+class RedBlackTree {
+    private RBNode root;
+    private final RBNode NIL;
+    public RedBlackTree() {
+        NIL = new RBNode(0);
+        NIL.color = Color.BLACK;
+        root = NIL;
+    }
+    // 左旋操作
+    private void leftRotate(RBNode x) {
+        RBNode y = x.right;
+        x.right = y.left;
+        if (y.left != NIL) {
+            y.left.parent = x;
+        }
+        y.parent = x.parent;
+        if (x.parent == NIL) {
+            root = y;
+        } else if (x == x.parent.left) {
+            x.parent.left = y;
+        } else {
+            x.parent.right = y;
+        }
+        y.left = x;
+        x.parent = y;
+    }
+    // 右旋操作
+    private void rightRotate(RBNode y) {
+        RBNode x = y.left;
+        y.left = x.right;
+        if (x.right != NIL) {
+            x.right.parent = y;
+        }
+        x.parent = y.parent;
+        if (y.parent == NIL) {
+            root = x;
+        } else if (y == y.parent.right) {
+            y.parent.right = x;
+        } else {
+            y.parent.left = x;
+        }
+        x.right = y;
+        y.parent = x;
+    }
+    // 插入修复
+    private void insertFixup(RBNode z) {
+        while (z.parent.color == Color.RED) {
+            if (z.parent == z.parent.parent.left) {
+                RBNode y = z.parent.parent.right;
+                if (y.color == Color.RED) {
+                    z.parent.color = Color.BLACK;
+                    y.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    z = z.parent.parent;
+                } else {
+                    if (z == z.parent.right) {
+                        z = z.parent;
+                        leftRotate(z);
+                    }
+                    z.parent.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    rightRotate(z.parent.parent);
+                }
+            } else {
+                RBNode y = z.parent.parent.left;
+                if (y.color == Color.RED) {
+                    z.parent.color = Color.BLACK;
+                    y.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    z = z.parent.parent;
+                } else {
+                    if (z == z.parent.left) {
+                        z = z.parent;
+                        rightRotate(z);
+                    }
+                    z.parent.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    leftRotate(z.parent.parent);
+                }
+            }
+        }
+        root.color = Color.BLACK;
+    }
+    // 插入节点
+    public void insert(int key) {
+        RBNode z = new RBNode(key);
+        RBNode y = NIL;
+        RBNode x = root;
+        while (x != NIL) {
+            y = x;
+            if (z.key < x.key) {
+                x = x.left;
+            } else {
+                x = x.right;
+            }
+        }
+        z.parent = y;
+        if (y == NIL) {
+            root = z;
+        } else if (z.key < y.key) {
+            y.left = z;
+        } else {
+            y.right = z;
+        }
+        z.left = NIL;
+        z.right = NIL;
+        z.color = Color.RED;
+        insertFixup(z);
+    }
+    // 中序遍历
+    public void inorder(RBNode node) {
+        if (node !) {
+            inorder(node.left);
+            System.out.print(node.key + " ");
+            inorder(node.right);
+        }
+    }
+    public void inorderTraversal() {
+        inorder(root);
+    }
+}
+// 主类，用于测试红黑树
+public class RedBlackTreeDemo {
+    public static void main(String[] args) {
+        RedBlackTree tree = new RedBlackTree();
+        // 插入一些节点
+        tree.insert(5);
+        tree.insert(3);
+        tree.insert(7);
+        tree.insert(2);
+        tree.insert(4);
+        tree.insert(6);
+        tree.insert(8);
+        // 中序遍历红黑树
+        System.out.println("红黑树中序遍历结果:");
+        tree.inorderTraversal();
+    }
+}
+代码解释
+代码首先定义了红黑树节点的颜色枚举 Color，包含 RED 和 BLACK 两种颜色。
+RBNode 类代表红黑树的节点，包含键值、左右子节点、父节点和颜色属性。
+RedBlackTree 类实现了红黑树的主要操作，包括左旋、右旋、插入修复和插入节点等功能。
+RedBlackTreeDemo 类的 main 方法用于测试红黑树的插入和中序遍历功能。
+2. 多线程并发编程：生产者 - 消费者模型
+生产者 - 消费者模型是多线程编程中的经典问题，以下代码使用 Java 的 BlockingQueue 实现了该模型。
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+// 生产者类
+class Producer implements Runnable {
+    private final BlockingQueue<Integer> queue;
+    public Producer(BlockingQueue<Integer> queue) {
+        this.queue = queue;
+    }
+    @Override
+    public void run() {
+        try {
+            for (int i = 0; i < 10; i++) {
+                System.out.println("生产者生产: " + i);
+                queue.put(i);
+                Thread.sleep(100);
+            }
+            // 插入一个特殊值表示生产结束
+            queue.put(-1);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+// 消费者类
+class Consumer implements Runnable {
+    private final BlockingQueue<Integer> queue;
+    public Consumer(BlockingQueue<Integer> queue) {
+        this.queue = queue;
+    }
+    @Override
+    public void run() {
+        try {
+            int item;
+            while ((item = queue.take()) != -1) {
+                System.out.println("消费者消费: " + item);
+                Thread.sleep(200);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+// 主类，用于测试生产者 - 消费者模型
+public class ProducerConsumerDemo {
+    public static void main(String[] args) {
+        BlockingQueue<Integer> queue = new LinkedBlockingQueue<>(5);
+        Producer producer = new Producer(queue);
+        Consumer consumer = new Consumer(queue);
+        Thread producerThread = new Thread(producer);
+        Thread consumerThread = new Thread(consumer);
+        producerThread.start();
+        consumerThread.start();
+        try {
+            producerThread.join();
+            consumerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+代码解释
+Producer 类实现了 Runnable 接口，负责生产数据并将其放入 BlockingQueue 中。
+Consumer 类也实现了 Runnable 接口，负责从 BlockingQueue 中取出数据并消费。
+ProducerConsumerDemo 类的 main 方法创建了一个 BlockingQueue，并启动生产者和消费者线程，最后等待两个线程执行完毕。
+3. 网络编程：简单的 HTTP 服务器
+以下代码实现了一个简单的 HTTP 服务器，能够处理客户端的请求并返回响应。
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+// 简单的 HTTP 服务器类
+public class SimpleHTTPServer {
+    private static final int PORT = 8080;
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("HTTP 服务器已启动，监听端口: " + PORT);
+            while (true) {
+                try (Socket socket = serverSocket.accept();
+                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+                    // 读取客户端请求
+                    String inputLine;
+                    while ((inputLine = in.readLine()) != null) {
+                        if (inputLine.isEmpty()) {
+                            break;
+                        }
+                        System.out.println(inputLine);
+                    }
+                    // 发送 HTTP 响应
+                    out.println("HTTP/1.1 200 OK");
+                    out.println("Content-Type: text/html");
+                    out.println();
+                    out.println("<html><body><h1>Hello, World!</h1></body></html>");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
